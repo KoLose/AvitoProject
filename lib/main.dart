@@ -1,4 +1,7 @@
 import 'package:avitoproject/auth_page.dart';
+import 'package:avitoproject/check.dart';
+import 'package:avitoproject/home.dart';
+import 'package:avitoproject/recoveryPassword_page.dart';
 import 'package:avitoproject/reg_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,8 +26,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => AuthPage(),
+        '/': (context) => CheckPage(),
+        '/auth': (context) => AuthPage(),
         '/reg': (context) => RegPage(),
+        '/home': (context) => HomePage(),
+        '/recovery': (context) => RecoveryPage(),
       },
     );
   }

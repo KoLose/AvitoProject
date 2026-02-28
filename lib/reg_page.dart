@@ -1,4 +1,7 @@
+import 'package:avitoproject/database/service.dart';
+import 'package:avitoproject/database/user_table/user_table.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegPage extends StatefulWidget {
   const RegPage({super.key});
@@ -8,6 +11,13 @@ class RegPage extends StatefulWidget {
 }
 
 class _RegPageState extends State<RegPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController repeatPassController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  AuthService authService = AuthService();
+  UserTable userTable = UserTable();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +38,31 @@ class _RegPageState extends State<RegPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: emailController,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  prefixIcon: Icon(Icons.person),
+                  labelText: 'Почта',
+                  hintText: 'Введите почту',
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: Colors.black26),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: TextField(
+                controller: nameController,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
@@ -51,6 +86,7 @@ class _RegPageState extends State<RegPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: phoneController,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
@@ -74,6 +110,7 @@ class _RegPageState extends State<RegPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: passController,
                 cursorColor: Colors.black,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -98,6 +135,7 @@ class _RegPageState extends State<RegPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: repeatPassController,
                 cursorColor: Colors.black,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -161,7 +199,56 @@ class _RegPageState extends State<RegPage> {
                   ),
                   backgroundColor: WidgetStatePropertyAll(Colors.orange),
                 ),
-                onPressed: () {},
+                onPressed: () async{
+                  if (
+                  emailController.text.isNotEmpty &&
+                  nameController.text.isNotEmpty &&
+                  phoneController.text.isNotEmpty &&
+                  passController.text.isNotEmpty &&
+                  repeatPassController.text.isNotEmpty) {
+                    if (passController.text == repeatPassController.text) {
+                      var user = await authService.singUp(
+                        emailController.text,
+                        passController.text
+                      );
+                      if (user!=null) {
+                        await userTable.AddUserTable(
+                          nameController.text,
+                          emailController.text,
+                          passController.text,
+                          '',
+                        );
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('isLoggedIn', true);
+                        Navigator.popAndPushNamed(context, '/home');
+                        }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Пользователь не найден!"),
+                            backgroundColor: Colors.black,
+                          ),
+                        );
+                      }
+                    }
+                    else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Не совпадают пароли"),
+                          backgroundColor: Colors.black,
+                        ),
+                      );
+                    }
+                  }
+                  else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Заполните поля!"),
+                        backgroundColor: Colors.black,
+                      ),
+                    );
+                  }
+                },
                 child: Text(
                   'Зарегистрироваться',
                   style: TextStyle(
@@ -180,7 +267,7 @@ class _RegPageState extends State<RegPage> {
                 Text('Уже есть аккаунт?'),
                 TextButton(
                   onPressed: () {
-                    Navigator.popAndPushNamed(context, '/login');
+                    Navigator.popAndPushNamed(context, '/auth');
                   },
                   child: Text(
                     'Войти',
