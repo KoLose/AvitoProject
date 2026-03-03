@@ -11,10 +11,10 @@ class UserTable {
   ) async{
     try {
       await supabase.client.from('users').insert({
-        'full_name':fullname,
+        'full_name': fullname,
         'email': email,
         'password': password,
-        'avatar': avatar
+        'avatar': avatar,
       });
     } catch (e) {
       return;

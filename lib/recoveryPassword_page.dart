@@ -88,7 +88,7 @@ class _RecoveryPageState extends State<RecoveryPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/');
+                    Navigator.popAndPushNamed(context, '/');
                   },
                   child: Text(
                     "Назад",
