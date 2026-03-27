@@ -27,6 +27,7 @@ class _CheckPageState extends State<CheckPage> {
     _checkAuth();
     super.initState();
   }
+
   Widget build(BuildContext context) {
     return _isLoggedIn ? HomePage() : AuthPage();
   }
